@@ -3,8 +3,8 @@
 import os
 
 
-print(os.environ.get('DATABASE_URL'))
-SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'postgresql://username:password@localhost/dbname')
+print(os.getenv('DATABASE_URL'))
+SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://username:password@localhost/dbname')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 

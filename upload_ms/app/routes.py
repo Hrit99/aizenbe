@@ -32,7 +32,7 @@ def upload_image(decoded_token):
     for file in files:
         if file:
             
-            url = upload_file_to_s3(file, os.environ.get('AWS_S3_BUCKET_NAME'))
+            url = upload_file_to_s3(file, os.getenv('AWS_S3_BUCKET_NAME'))
             if url:
                 
                 image_meta = ImageMeta(filename=file.filename, url=url, user_id=user_id)  

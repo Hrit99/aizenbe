@@ -17,7 +17,7 @@ def generate_description():
     return jsonify({"description": description}), 200
 
 def call_openai_api(s3_url):
-    openai_api_key = os.environ.get('OPENAI_API_KEY')  
+    openai_api_key = os.getenv('OPENAI_API_KEY')  
     headers = {
         'Authorization': f'Bearer {openai_api_key}',
         'Content-Type': 'application/json',

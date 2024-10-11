@@ -12,12 +12,10 @@ class User(db.Model):
     def set_password(self, password):
         """Hashes the password and sets it."""
         hashed_password = generate_password_hash(password).decode('utf-8')
-        print(f"Setting password for {self.username}: {hashed_password}")  
         self.password = hashed_password
 
     def check_password(self, password):
         """Checks if the provided password matches the stored hash."""
-        print(f"Checking password for {self.username}")  
         return check_password_hash(self.password, password)
 
 

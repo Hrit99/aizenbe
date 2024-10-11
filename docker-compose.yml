@@ -1,0 +1,104 @@
+version: '3.8'
+
+services:
+  aizen-postgres:
+    image: postgres:15
+    container_name: aizen-postgres
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${SQL_USERNAME}
+      POSTGRES_PASSWORD: ${SQL_PASSWORD}
+      POSTGRES_DB: ${SQL_DATABASE_NAME}
+    ports:
+      - "5434:5432"
+    volumes:
+      - aizen-pg-data:/var/lib/postgresql/data
+    networks:
+      - aizen-backend-network
+    command: >
+      sh -c "echo 'Postgres container created' && 
+      docker-entrypoint.sh postgres"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${SQL_USERNAME} -d ${SQL_DATABASE_NAME}"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+
+
+  aizen_auth_ms:
+    build:
+      context: ./auth_ms
+    container_name: aizen_auth_ms
+    environment:
+      FLASK_ENV: development
+      DATABASE_URL: postgresql+psycopg2://${SQL_USERNAME}:${SQL_PASSWORD}@aizen-postgres:5432/${SQL_DATABASE_NAME}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+    ports:
+      - "5001:5000" 
+    networks:
+      - aizen-backend-network
+    depends_on:
+      aizen-postgres:
+        condition: service_healthy
+
+  aizen_upload_ms:
+    build:
+      context: ./upload_ms
+    container_name: aizen_upload_ms
+    environment:
+      FLASK_ENV: development
+      DATABASE_URL: postgresql+psycopg2://${SQL_USERNAME}:${SQL_PASSWORD}@aizen-postgres:5432/${SQL_DATABASE_NAME}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
+      AWS_REGION: ${AWS_REGION}
+    ports:
+      - "5002:5000" 
+    networks:
+      - aizen-backend-network
+    depends_on:
+      aizen-postgres:
+        condition: service_healthy
+
+  aizen_llm_ms:
+    build:
+      context: ./llm_ms
+    container_name: aizen_llm_ms
+    environment:
+      FLASK_ENV: development
+      DATABASE_URL: postgresql+psycopg2://${SQL_USERNAME}:${SQL_PASSWORD}@aizen-postgres:5432/${SQL_DATABASE_NAME}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    ports:
+      - "5003:5000" 
+    networks:
+      - aizen-backend-network
+    depends_on:
+      aizen-postgres:
+        condition: service_healthy
+
+  init_db:
+    build:
+      context: ./initdb
+    container_name: init_db
+    environment:
+      FLASK_ENV: development
+      DATABASE_URL: postgresql+psycopg2://${SQL_USERNAME}:${SQL_PASSWORD}@aizen-postgres:5432/${SQL_DATABASE_NAME}
+    ports:
+      - "5004:5000" 
+    networks:
+      - aizen-backend-network
+    depends_on:
+      aizen-postgres:
+        condition: service_healthy
+
+
+volumes:
+  aizen-pg-data:
+
+networks:
+  aizen-backend-network:
+    driver: bridge
+  aizen-frontend-network:
+    driver: bridge

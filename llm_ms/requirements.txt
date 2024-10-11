@@ -1,0 +1,9 @@
+Flask
+Flask-SQLAlchemy
+Flask-Marshmallow
+requests
+python-dotenv
+psycopg2-binary
+flask_bcrypt
+marshmallow-sqlalchemy
+flask-cors

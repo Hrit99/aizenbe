@@ -1,6 +1,8 @@
 import boto3
 from botocore.exceptions import NoCredentialsError
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 def upload_file_to_s3(file, bucket_name, object_name=None):
     s3_client = boto3.client(

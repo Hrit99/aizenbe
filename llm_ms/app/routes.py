@@ -2,6 +2,8 @@ from flask import request, jsonify
 from app import app, db
 import requests
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 @app.route('/generate-description', methods=['POST'])
 def generate_description():

@@ -5,6 +5,8 @@ from app.utils.some_utils import upload_file_to_s3
 import jwt  
 from functools import wraps
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 def token_required(f):
     @wraps(f)

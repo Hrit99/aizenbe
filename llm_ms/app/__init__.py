@@ -3,6 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os
 from flask_cors import CORS
+from dotenv import load_dotenv
+load_dotenv()
 
 
 
